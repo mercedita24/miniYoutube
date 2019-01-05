@@ -1,0 +1,68 @@
+BackendBundle\Entity\Video:
+    type: entity
+    table: videos
+    indexes:
+        fk_videos_users:
+            columns:
+                - user_id
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        title:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+        description:
+            type: text
+            nullable: true
+            length: 65535
+            options:
+                fixed: false
+        status:
+            type: string
+            nullable: true
+            length: 20
+            options:
+                fixed: false
+        image:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+        videoPath:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: video_path
+        createdAt:
+            type: datetime
+            nullable: true
+            column: created_at
+        updatedAt:
+            type: datetime
+            nullable: true
+            column: updated_at
+    manyToOne:
+        user:
+            targetEntity: User
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                user_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }
