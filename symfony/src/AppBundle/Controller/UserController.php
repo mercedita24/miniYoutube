@@ -84,14 +84,20 @@ class UserController extends Controller {
 		$hash = $request->get("authorization", null); //se recoge el hash
 		$authCheck = $helpers->authCheck($hash); //se llama al metodod authCheck q esta en los helpers
 
-		if ($authCheck == true) {
+		if ($authCheck == true) { //si al decodificarlo da true entonces ya podremos editar el usuario
+			
+			$identity = $helpers->authCheck($hash, true);
+			$em = $this->getDoctrine()->getManager(); //buscar en la BD para saber q usuario a hecho la peticion
+			$user = $em->getRepository("BackendBundle:User")->findOneBy(array(
+					"id" => $identity->sub
+					));
 
 			$json = $request->get("json", null); //se recoge la variable q llega por post
 			$params = json_decode($json); //decodificar esa variable recogida
 			$data = array(
 				"status" => "error",
 				"code" => 400,
-				"msg" => "User not Created"
+				"msg" => "User not Update ash"
 			);
 
 			if ($json != null) {
@@ -108,8 +114,10 @@ class UserController extends Controller {
 				$validate_email = $this->get("validator")->validate($email, $emailContraint);
 
 				//validar que todos los campos esten rellenos
-				if ($email != null && count($validate_email) == 0 && $password != NULL && $name != null && $surname != null) {
-					$user = new User();
+				if ($email != null ) {
+					//&& count($validate_email) == 0 && $name != null && $surname != null..... le quite esta validacion en el if
+					//porque no permitia actualizar con el mismo email T_T
+					
 					//Set para asignarle un valor a las propiedades de la clase
 					//se le esta dando valor al objeto user
 					$user->setCreatedAt($createdAt);
@@ -119,39 +127,103 @@ class UserController extends Controller {
 					$user->setName($name);
 					$user->setSurname($surname);
 
+					if($password!=null){
 					//Cifrar el password usando el hash de php
-					$pwd = hash('sha256', $password);
-					$user->setPassword($pwd); //se le pasa la variable $pwd xq es la q ya esta cifrada
-
+						$pwd = hash('sha256', $password);
+						$user->setPassword($pwd); //se le pasa la variable $pwd xq es la q ya esta cifrada
+					}
 					$em = $this->getDoctrine()->getManager(); //se manda a llamar al entity manager
 					$isset_user = $em->getRepository("BackendBundle:User")->findBy(//se usa findby para ver si el email no es repetido
 							array(
 								"email" => $email
+								
 					));
-					if (count($isset_user) == 0) {  //si isset_user da cero es xq no existe en la BD y lo vamos a guardar como nuevo
+					if (count($isset_user) == 0 || $identity->email == $email) {  //si isset_user da cero es xq no existe en la BD y lo vamos a guardar como nuevo
 						$em->persist($user);
-						$em->flush();
+						$em->flush(); //se guarda en la BD
 
 						$data["status"] = 'success';
 						$data["code"] = 200;
-						$data["msg"] = 'New User Created!!';
+						$data["msg"] = 'User Updated!!';
 					} else {
 						$data = array(
 							"status" => "error",
 							"code" => 400,
-							"msg" => "User not Created, duplicated!"
+							"msg" => "User not Updated buuuuuuuuuu!"
 						);
 					}
 				}
-			} else {
+			} 
+		}
+		else {
 				$data = array(
 					"status" => "error",
 					"code" => 400,
 					"msg" => "Authorization not valid!!!"
 				);
 			}
-		}
 		return $helpers->json($data);
 	}
+	
+	public function uploadImageAction(Request $request) {
+		$helpers = $this->get("app.helpers");
+		
+		$hash = $request->get("authorization", null); //se recoge el hash q llega por token
+		$authCheck = $helpers->authCheck($hash); //comprbar q el hash q llega por post es correcto
+		
+		if($authCheck){
+			$identity = $helpers->authCheck($hash, true); //decodificar el token y devolvera los datos del usuario
+			
+			$em = $this->getDoctrine()->getManager(); //buscar en la BD para saber q usuario a hecho la peticion
+			$user = $em->getRepository("BackendBundle:User")->findOneBy(array(
+					"id" => $identity->sub
+					)); //esto es como un Query when el id del usuario = a id del token
+			
+			//para subir la imagen
+			$file = $request->files->get("image"); //el objeto file ya existe en php y tiene metodos (en postman se pasa image)
+			
+			if(!empty($file) && $file!=null){
+				$ext = $file->guessExtension(); //extension del fichero q se a subido
+				
+				if($ext == "jpeg" || $ext == "png" || $ext == "jpg" || $ext == "gif") {
+					
+					$file_name = time().".".$ext;
+					$file->move("uploads/users", $file_name);
 
+					$user->setImage($file_name);
+
+					$em->persist($user);
+					$em->flush(); //se guarda en la BD
+
+					$data = array(
+						"status" => "success",
+						"code" => 200,
+						"msg" => "Image for User uploaded success!!!"
+					);
+				}else{
+					$data = array(
+					"status" => "error",
+					"code" => 400,
+					"msg" => "file not valid!!!"
+				);
+				}		
+			}else{
+				$data = array(
+					"status" => "error",
+					"code" => 400,
+					"msg" => "Image for User NOT upload!!!"
+				);
+			}
+			
+		}else{
+			$data = array(
+					"status" => "error",
+					"code" => 400,
+					"msg" => "Authorization not valid!!!"
+				);
+		}
+	
+		return $helpers->json($data); //se retorna en json
+		}
+		
 }
