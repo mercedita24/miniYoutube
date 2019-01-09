@@ -25,7 +25,7 @@ class Helpers {
 		return $auth;
 	}
 	//convertir cualquier dato q le pasemos a JSON
-	public function json($data) 
+	/*public function json($data) 
 	{
 		$normalizers = array (new \Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer());
 		$encoders = array ("json" => new \Symfony\Component\Serializer\Encoder\JsonEncoder());
@@ -39,5 +39,28 @@ class Helpers {
 		return $response;
 				
 		
-	}
+	}*/
+	public function json($data) {
+        //convert object to array
+        $normalizer = new \Symfony\Component\Serializer\Normalizer\ObjectNormalizer();
+
+        $normalizer->setIgnoredAttributes(array('transitions','password'));
+        
+        $normalizers = array($normalizer);
+
+        //convert array to json or xml
+        $encoders = array("json" => new \Symfony\Component\Serializer\Encoder\JsonEncoder());        
+        //object serializer
+        $serilizer = new \Symfony\Component\Serializer\Serializer($normalizers, $encoders);
+        
+        $json = $serilizer->serialize($data, 'json');
+
+        //Http object
+
+        $response = new \Symfony\Component\HttpFoundation\Response();
+        $response->setContent($json);
+        $response->headers->set("Content-Type", "application/json");
+
+        return $response;
+    }
 }

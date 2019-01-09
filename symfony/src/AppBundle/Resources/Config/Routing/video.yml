@@ -1,0 +1,4 @@
+video_new:           
+    path:   /new
+    defaults: { _controller: "AppBundle:Video:new"}
+    methods:  POST

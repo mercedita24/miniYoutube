@@ -2,6 +2,10 @@ app_default:
     resource: "@AppBundle/Resources/Config/Routing/default.yml"
     prefix: /
     
-user_new:
+app_user:
     resource: "@AppBundle/Resources/Config/Routing/user.yml"
     prefix: /user
+    
+app_video:
+    resource: "@AppBundle/Resources/Config/Routing/video.yml"
+    prefix: /video
