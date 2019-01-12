@@ -90,5 +90,174 @@ class VideoController extends Controller {
 		}
 		return $helpers->json($data);
 	}
-	
+
+	public function editAction(Request $request, $id = null) {
+		$helpers = $this->get("app.helpers");
+
+		$hash = $request->get("authorization", null); //se recoge el hash
+		$authCheck = $helpers->authCheck($hash); //se llama al metodod authCheck q esta en los helpers
+
+		if ($authCheck == true) {
+			$identity = $helpers->authCheck($hash, true);
+			$json = $request->get("json", null); //se recoge la variable q llega por post
+			$params = json_decode($json); //decodificar esa variable recogida
+
+			if ($json != null) {
+				$createdAt = new \Datetime("now");
+				$updatedAt = new \Datetime("now");
+				$image = null; //imagen q tendra en miniatura el video
+				$video_path = null;
+
+				$video_id = $id;
+				$user_id = ($identity->sub != null) ? $identity->sub : null;
+				$title = (isset($params->title)) ? $params->title : null;
+				$description = (isset($params->description)) ? $params->description : null;
+				$status = (isset($params->status)) ? $params->status : null;
+
+				if ($user_id != null && $title != null) {
+					$em = $this->getDoctrine()->getManager(); //se manda a llamar al entity manager
+
+					$video = $em->getRepository("BackendBundle:Video")->findOneBy(
+							array(
+								"id" => $video_id
+					));
+
+					if (isset($identity->sub) && $identity->sub == $video->getUser()->getId()) { //se verifica q el id del usuario q a creado el video sea el correcto recibido en el token
+						$video->setTitle($title);
+						$video->setDescription($description);
+						$video->setStatus($status);
+						$video->setUpdatedAt($updatedAt);
+
+						$em->persist($video);
+						$em->flush(); //se guarda en la BD
+
+						$data = array(
+							"status" => "success",
+							"code" => 200,
+							"msg" => "video updated success!!"
+						);
+					} else {
+						$data = array(
+							"status" => "error",
+							"code" => 400,
+							"msg" => "Video not updated, You not owner :( !!!"
+						);
+					}
+				} else {
+					$data = array(
+						"status" => "error",
+						"code" => 400,
+						"msg" => "Video not updated!!!"
+					);
+				}
+			} else {
+				$data = array(
+					"status" => "error",
+					"code" => 400,
+					"msg" => "Video not updated, parametros fallidos!!!"
+				);
+			}
+		} else {
+			$data = array(
+				"status" => "error",
+				"code" => 400,
+				"msg" => "Authorization not valid!!!"
+			);
+		}
+		return $helpers->json($data);
+	}
+
+	public function uploadAction(Request $request, $id) {
+
+		$helpers = $this->get("app.helpers");
+
+		$hash = $request->get("authorization", null); //se recoge el hash
+		$authCheck = $helpers->authCheck($hash); //se llama al metodod authCheck q esta en los helpers
+
+		if ($authCheck == true) {
+			$identity = $helpers->authCheck($hash, true);
+
+			$video_id = $id;
+
+			$em = $this->getDoctrine()->getManager(); //se manda a llamar al entity manager
+
+			$video = $em->getRepository("BackendBundle:Video")->findOneBy(
+					array(
+						"id" => $video_id
+			));
+
+			if ($video_id != null && isset($identity->sub) && $identity->sub == $video->getUser()->getId()) {
+
+				$file = $request->files->get('image', null);
+				$file_video = $request->files->get('video', null);
+
+				if ($file != null && !empty($file)) {
+					$ext = $file->guessExtension();
+
+					if ($ext == "png" || $ext == "jpeg" || $ext == "jpg" || $ext == "gif") {
+						$file_name = time() . "." . $ext;
+						$path_of_file = "uploads/video_image/video_" . $video_id;
+						$file->move($path_of_file, $file_name);
+
+						$video->setImage($file_name);
+						$em->persist($video);
+						$em->flush();
+
+						$data = array(
+							"status" => "success",
+							"code" => 200,
+							"msg" => "Image file uploaded !!!"
+						);
+					} else {
+						$data = array(
+							"status" => "error",
+							"code" => 400,
+							"msg" => "Formato incorrecto"
+						);
+					}
+				} else { //si no se sube una imagen es por q se esta subiendo un video
+					if ($file_video != null && !empty($file_video)) {
+						$ext = $file_video->guessExtension();
+
+						if ($ext == "mp4" || $ext == "avi") {
+							$file_name = time() . "." . $ext;
+							$path_of_file = "uploads/video_files/video_" . $video_id;
+							$file_video->move($path_of_file, $file_name);
+
+							$video->setVideoPath($file_name);
+							
+							$em->persist($video);
+							$em->flush();
+
+							$data = array(
+								"status" => "success",
+								"code" => 200,
+								"msg" => "Video file uploaded !!!"
+							);
+						} else {
+							$data = array(
+								"status" => "error",
+								"code" => 400,
+								"msg" => "Formato incorrectoooooooooooo"
+							);
+						}
+					}
+				}
+			} else {
+				$data = array(
+					"status" => "error",
+					"code" => 400,
+					"msg" => "Video not updated, You not owner :( !!!"
+				);
+			}
+		} else {
+			$data = array(
+				"status" => "error",
+				"code" => 400,
+				"msg" => "Authorization not valid!!!"
+			);
+		}
+		return $helpers->json($data);
+	}
+
 }
