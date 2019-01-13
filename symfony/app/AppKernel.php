@@ -15,6 +15,7 @@ class AppKernel extends Kernel
             new Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
+			new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(), //bundle para la paginacion de los videos
             new AppBundle\AppBundle(),
             new BackendBundle\BackendBundle(),
         ];

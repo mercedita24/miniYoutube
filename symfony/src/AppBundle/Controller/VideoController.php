@@ -260,4 +260,60 @@ class VideoController extends Controller {
 		return $helpers->json($data);
 	}
 
+	//metodo para el admin q nos liste los videos q tenemos en BD
+	public function videosAction(Request $request) {
+		$helpers = $this->get("app.helpers");
+		
+		$em = $this->getDoctrine()->getManager();
+		
+		//dql es un pseudo lenguaje para trabajar con objetos en doctrine
+		$dql = "SELECT v FROM BackendBundle:Video v ORDER BY v.id DESC";
+		
+		//crear al final la consulta
+		$query = $em->createQuery($dql);
+		
+		$page = $request->query->getInt("page",1); //primero la pagina 1
+		
+		//cargando servicio del paginador
+		$paginator = $this->get("knp_paginator");
+		
+		//numero de videos por pagina igual a 6
+		$items_per_page = 6;
+		
+		//lanzamos la paginacion
+		$pagination = $paginator->paginate($query, $page, $items_per_page);
+		
+		$total_items_count = $pagination->getTotalItemCount();
+		
+		$data = array(
+			"status" => "success",
+			"total_item_count" => $total_items_count,
+			"page_actual" => $page,
+			"items_per_page" => $items_per_page,
+			"total_pages" => ceil($total_items_count / $items_per_page),
+			"data" => $pagination
+		);
+		
+		return $helpers->json($data);
+	}
+	
+	public function lastsVideosAction(Request $request) {
+		$helpers = $this->get("app.helpers");
+		
+		$em = $this->getDoctrine()->getManager();
+		
+		//dql es un pseudo lenguaje para trabajar con objetos en doctrine
+		$dql = "SELECT v FROM BackendBundle:Video v ORDER BY v.createdAt DESC";
+		
+		//crear al final la consulta
+		$query = $em->createQuery($dql)->setMaxResults(5);
+		$videos = $query->getResult();
+		
+		$data = array(
+			"status"	=> 'success',
+			"data"		=> $videos
+		);
+		
+		return $helpers->json($data);
+	}
 }
