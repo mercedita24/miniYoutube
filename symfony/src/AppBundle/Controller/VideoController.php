@@ -296,6 +296,7 @@ class VideoController extends Controller {
 		return $helpers->json($data);
 	}
 
+	//metodo para mostrar los ultimos 5 videos subidos
 	public function lastsVideosAction(Request $request) {
 		$helpers = $this->get("app.helpers");
 
@@ -316,6 +317,7 @@ class VideoController extends Controller {
 		return $helpers->json($data);
 	}
 
+	//metodo para ver el detalle de un video especifico por el parametro ID
 	public function videoAction(Request $request, $id = null) {
 		$helpers = $this->get("app.helpers");
 		$em = $this->getDoctrine()->getManager();
@@ -340,6 +342,7 @@ class VideoController extends Controller {
 		return $helpers->json($data);
 	}
 
+	//metodo para hacer una busqueda de video atravez de un parametro como palabra clave
 	public function searchAction(Request $request, $search = null) {
 		$helpers = $this->get("app.helpers");
 
@@ -376,5 +379,6 @@ class VideoController extends Controller {
 
 		return $helpers->json($data);
 	}
-
+	
+	
 }

@@ -220,4 +220,53 @@ class UserController extends Controller {
 		return $helpers->json($data); //se retorna en json
 	}
 
+	//metodo para crear canal de usuario
+	public function channelAction(Request $request, $id = null) {
+		$helpers = $this->get("app.helpers");
+
+		$em = $this->getDoctrine()->getManager();
+
+		$user = $em->getRepository("BackendBundle:User")->findBy(array(//usuario q tiene el id q nos llega por la url
+			"id" => $id
+		));
+
+		//dql es un pseudo lenguaje para trabajar con objetos en doctrine
+		$dql = "SELECT v FROM BackendBundle:Video v WHERE v.user = $id ORDER BY v.id DESC";
+
+		//crear al final la consulta
+		$query = $em->createQuery($dql);
+
+		$page = $request->query->getInt("page", 1); //primero la pagina 1
+		//cargando servicio del paginador
+		$paginator = $this->get("knp_paginator");
+
+		//numero de videos por pagina igual a 6
+		$items_per_page = 6;
+
+		//lanzamos la paginacion
+		$pagination = $paginator->paginate($query, $page, $items_per_page);
+
+		$total_items_count = $pagination->getTotalItemCount();
+
+
+		if (count($user) == 1) {
+			$data = array(
+				"status" => "success",
+				"total_item_count" => $total_items_count,
+				"page_actual" => $page,
+				"items_per_page" => $items_per_page,
+				"total_pages" => ceil($total_items_count / $items_per_page),
+			);
+			$data["data"]["videos"] = $pagination;
+			$data["data"]["user"] = $user;
+		} else {
+			$data = array(
+				"status" => "error",
+				"code" => 400,
+				"msg" => "User dont exists"
+			);
+		}
+		return $helpers->json($data);
+	}
+
 }
