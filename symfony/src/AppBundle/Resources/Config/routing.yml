@@ -9,3 +9,7 @@ app_user:
 app_video:
     resource: "@AppBundle/Resources/Config/Routing/video.yml"
     prefix: /video
+    
+app_comment:
+    resource: "@AppBundle/Resources/Config/Routing/comment.yml"
+    prefix: /comment

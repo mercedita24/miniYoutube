@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use BackendBundle\Entity\User;
 use BackendBundle\Entity\Video;
 
+
 class VideoController extends Controller {
 	/* public function pruebasAction() {
 	  echo "Hola controlador de videos :D";
@@ -21,7 +22,7 @@ class VideoController extends Controller {
 		$authCheck = $helpers->authCheck($hash); //se llama al metodod authCheck q esta en los helpers
 
 		if ($authCheck == true) {
-			$identity = $helpers->authCheck($hash, true);
+			$identity = $helpers->authCheck($hash, true);//decodifica los datos
 			$json = $request->get("json", null); //se recoge la variable q llega por post
 			$params = json_decode($json); //decodificar esa variable recogida
 
