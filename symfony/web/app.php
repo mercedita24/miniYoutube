@@ -2,6 +2,21 @@
 
 use Symfony\Component\HttpFoundation\Request;
 
+//configuracion de cabeceras para q no haya problema con angular
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
+
+//configurar tambien los metodos http 
+
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+header("Allow: GET, POST, OPTIONS, PUT, DELETE");
+
+//CONDICION PARA SACAR EL METODO Q VIENEN EN LA PETICION EN SI
+
+$method = $_SERVER["REQUEST_METHOD"];
+if($method== "OPTIONS"){
+	die();
+}
 /**
  * @var Composer\Autoload\ClassLoader
  */
