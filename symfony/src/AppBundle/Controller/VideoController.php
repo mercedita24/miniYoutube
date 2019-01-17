@@ -39,7 +39,7 @@ class VideoController extends Controller {
 
 				if ($user_id != null && $title != null) {
 					$em = $this->getDoctrine()->getManager(); //se manda a llamar al entity manager
-					$user = $em->getRepository("BackendBundle:User")->findOneBy(//se usa findby para ver si el email no es repetido
+					$user = $em->getRepository("BackendBundle:User")->findOneBy(
 							array(
 								"id" => $user_id
 					));
@@ -55,7 +55,7 @@ class VideoController extends Controller {
 					$em->persist($video);
 					$em->flush(); //se guarda en la BD
 
-					$video = $em->getRepository("BackendBundle:Video")->findOneBy(//se usa findby para ver si el email no es repetido
+					$video = $em->getRepository("BackendBundle:Video")->findOneBy(
 							array(
 								"user" => $user,
 								"title" => $title,

@@ -137,4 +137,38 @@ class CommentController extends Controller {
 		return $helpers->json($data);
 	}
 
+	//listar los comentarios q hay vinculados a un video
+	//para esto se recibe un id  q este vinculado a ese video y los mostrara en formato json
+
+	public function listAction(Request $request, $id = null) {
+		$helpers = $this->get("app.helpers");
+
+		$em = $this->getDoctrine()->getManager(); //se manda a llamar al entity manager
+
+		$video = $em->getRepository("BackendBundle:Video")->findOneBy(//busca en la BD
+				array(
+					"id" => $id
+		));
+		//buscar comentario asociados a ese video (primero se busco el video y luego los comentarios)
+		$comment = $em->getRepository("BackendBundle:Comment")->findBy(
+				array(
+			"video" => $video
+				), array('id' => 'desc')); //los ordena del mas nuevo al mas viejo
+
+		if (count($comment) >= 1) {
+			$data = array(
+				"status" => "success",
+				"code" => 200,
+				"data" => $comment
+			);
+		}else{
+			$data = array(
+				"status" => "error",
+				"code" => 400,
+				"msg" => "no existen comentarios asociados para este video"
+			);
+		}
+		return $helpers->json($data);
+	}
+
 }

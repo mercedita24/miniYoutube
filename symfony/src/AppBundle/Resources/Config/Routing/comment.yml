@@ -7,3 +7,8 @@ comment_delete:
     path:   /delete/{id}
     defaults: { _controller: "AppBundle:Comment:delete", id: null }
     methods:  POST
+    
+comment_list:           
+    path:   /list/{id}
+    defaults: { _controller: "AppBundle:Comment:list", id: null }
+    methods:  GET
