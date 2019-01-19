@@ -13,7 +13,8 @@ Una vez instalado Composer, ejecuta los siguientes comandos para descargar e ins
 # clona el código de la aplicación
 $ git clone git://github.com/mercedita24/miniYoutube.git
 
-# instala las dependencias del proyecto (incluyendo Symfony)
+# instala las dependencias del proyecto 
+(debes estar en la carpeta de symfony)
 $ composer install
 
 # Probando la aplicación
@@ -21,3 +22,12 @@ $ composer install
 La forma más sencilla de probar la aplicación, ejecuta el siguiente comando, que arranca el servidor web interno de PHP y hace que tu aplicación se pueda ejecutar sin necesidad de usar Apache o Nginx:
 
 $ php app/console server:run
+
+# ANGULAR 2
+la parte de Frontend esta desarrollada en angular lo cual debes estar en la carpeta "angular" de este repositorio
+
+# Descarga las dependencias
+npm install
+
+# Probando la aplicación
+ng serve
