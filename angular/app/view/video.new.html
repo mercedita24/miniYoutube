@@ -1,0 +1,86 @@
+<div class="col-md-12" *ngIf="identity">
+	<hr/>
+	<h1>{{titulo}}</h1>
+	<hr/>
+
+	<div class="alert alert-success" *ngIf="status == 'success'">
+			Datos básicos de tu nuevo vídeo <strong>{{video.title}}</strong> guardados, ahora añade una imagen y un vídeo!!
+	</div>
+
+	<div class="alert alert-danger" *ngIf="status == 'error'">
+			Datos básicos no guardados
+	</div>
+
+
+	<form #newVideoForm="ngForm" (ngSubmit)="onSubmit()" class="col-md-4" *ngIf="status != 'success'">
+		<p>
+			Paso 1 de 3. Añade la información básica de tu vídeo.
+		</p>
+		<p>	
+			<label>Titulo:</label>
+			<input type="text" class="form-control" #title="ngModel" name="title" [(ngModel)]="video.title" required />
+			<span *ngIf="!title.valid && title.touched">
+				El titulo no es correcto
+			</span>
+		</p>
+
+		<p>	
+			<label>Descripción:</label>
+			<textarea class="form-control" name="description" #description="ngModel" [(ngModel)]="video.description" required></textarea>
+		</p>
+
+		<p>
+			<label>Estado:</label>
+			<select class="form-control" (change)="callVideoStatus(videostatus.value)" #videostatus>
+				<option value="public" [attr.selected]="video.status === 'public' ? 'selected' : null">Público</option>
+				<option value="private" [attr.selected]="video.status === 'private' ? 'selected' : null">Privado</option>
+			</select>
+		</p>	
+
+
+		<input type="submit" value="Crear vídeo" class="btn btn-success" />
+	</form>
+
+	<div class="col-md-4" *ngIf="status == 'success' && uploadedImage == false">
+		<h4>Imagen del video</h4>
+		<p>Paso 2 de 3. Sube la imagen del video</p>
+		<p>
+			<input type="file" placeholder="Subir imagen..." (change)="fileChangeEventImage($event)" />
+		</p>
+		<div class="progress">
+			<div id="upload-progress-bar" class="progress-bar progress-bar-success" 
+			role="progressbar"
+			aria-valuenow="0"
+			aria-valuemin="0"
+			aria-valuemax="100"
+			style="width: 0%;"
+			></div>
+		</div>
+		<p id="status"></p>
+		<button class="btn btn-default" (click)="nextUploadVideo()">
+			Continuar y subir el vídeo
+		</button>
+	</div>
+
+
+	<div class="col-md-4" *ngIf="status == 'success' && uploadedImage == true">
+		<h4>Sube el vídeo</h4>
+		<p>Paso 3 de 3. Sube tu vídeo</p>
+		<p>
+			<input type="file" placeholder="Subir video..." (change)="fileChangeEventVideo($event)" />
+		</p>
+		<div class="progress">
+			<div id="upload-progress-bar" class="progress-bar progress-bar-success" 
+			role="progressbar"
+			aria-valuenow="0"
+			aria-valuemin="0"
+			aria-valuemax="100"
+			style="width: 0%;"
+			></div>
+		</div>
+		<p id="status"></p>
+		<button class="btn btn-default" (click)="redirectToVideo()">
+			Continuar y ver como ha quedado!!
+		</button>
+	</div>
+</div>

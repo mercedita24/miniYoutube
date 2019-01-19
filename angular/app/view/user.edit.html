@@ -1,0 +1,57 @@
+<div class="col-md-12">
+	<hr/>
+	<h1>{{titulo}}</h1>
+	<hr/>
+
+	<div class="alert alert-success" *ngIf="status == 'success'">
+		Has modificado tus datos correctamente.
+	</div>
+
+	<div class="alert alert-danger" *ngIf="status == 'error'">
+		No se ha podido modificar tu información, intentalo más tarde.
+	</div>
+
+	<form #updateUserForm="ngForm" (ngSubmit)="onSubmit()" class="col-md-4">
+		<p>
+			<label>Nombre:</label>
+			<input type="text" class="form-control" #name="ngModel" name="name" [(ngModel)]="user.name" required/>
+			<span *ngIf="!name.valid && name.touched">El nombre es obligatorio</span>
+		</p>
+
+		<p>
+			<label>Apellidos:</label>
+			<input type="text" class="form-control" #surname="ngModel" name="surname" [(ngModel)]="user.surname" required/>
+			<span *ngIf="!surname.valid && surname.touched">Los apellidos son obligatorios</span>
+		</p>
+
+		<p>
+			<label>Email:</label>
+			<input type="email" class="form-control" #email="ngModel" name="email" [(ngModel)]="user.email" required/>
+			<span *ngIf="!email.valid && email.touched">El email es obligatorio</span>
+		</p>
+
+		<p>
+			<label>Contraseña:</label>
+			<input type="password" class="form-control" #password="ngModel" name="password" [(ngModel)]="user.password" required/>
+			<span *ngIf="!password.valid && password.touched">La contraseña es obligatoria</span>
+		</p>
+
+		<input type="submit" value="{{titulo}}" class="btn btn-success"/>
+	</form>
+	<div class="">
+		<h4>Imagen de perfil</h4>
+		<p>
+			<input type="file" placeholder="Subir imagen..." (change)="fileChangeEvent($event)" />
+		</p>
+		<div class="progress">
+			<div id="upload-progress-bar" class="progress-bar progress-bar-success" 
+			role="progressbar"
+			aria-valuenow="0"
+			aria-valuemin="0"
+			aria-valuemax="100"
+			style="width: 0%;"
+			></div>
+		</div>
+		<p id="status"></p>
+	</div>
+</div>

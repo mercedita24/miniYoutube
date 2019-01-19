@@ -1,0 +1,51 @@
+<div class="loader" *ngIf="loading == 'show'">
+	<img src="assets/images/ajax-gray.gif" />
+</div>
+
+<div class="col-md-12" *ngIf="userChannel && videos">
+	<hr/>
+		<div class="channel-head">
+			<div class="image-channel">
+				<img src="http://localhost/curso-fullstack/symfony/web/uploads/users/{{userChannel.image}}" />
+			</div>
+			<h1>{{titulo}} de {{userChannel.name}} {{userChannel.surname}}</h1>
+		</div>
+	<hr/>
+
+	<div class="all-videos">
+
+		<ul id="videos-list" *ngIf="videos && loading == 'hide'">
+			<li *ngFor="let video of videos" class="video-item col-md-4 pull-left">
+				<div class="video-image-thumb">
+					<img src="http://localhost/curso-fullstack/symfony/web/uploads/video_images/video_{{video.id}}/{{video.image}}"  *ngIf="video.image"/>
+				</div>
+				<div class="data">
+					<h4><a [routerLink]="['/video', video.id]">{{video.title}}</a></h4>
+					<p>Subido por <a [routerLink]="['/index']">{{video.user.name}} {{video.user.surname}}</a></p>
+					<div class="video-buttons" *ngIf="identity && identity != null && identity.sub == video.user.id">
+						<a [routerLink]="['/edit-video', video.id]" class="btn btn-primary">Editar</a>
+					</div>
+				</div>
+				<div class="clearfix"></div>
+			</li>
+		</ul>
+	</div>
+
+	<div class="clearfix"></div>
+
+	<ul class="pagination">
+		<li>
+			<a [routerLink]="['/channel', userChannel.id, pagePrev]" aria-label="Previous">
+				<span aria-hidden="true">&laquo;</span>
+			</a>
+		</li>
+		<li *ngFor="let page of pages">
+			<a [routerLink]="['/channel', userChannel.id, page + 1]">{{page + 1}}</a>
+		</li>
+		<li>
+			<a [routerLink]="['/channel', userChannel.id, pageNext]" aria-label="Next">
+				<span aria-hidden="true">&raquo;</span>
+			</a>
+		</li>
+	</ul>
+</div>

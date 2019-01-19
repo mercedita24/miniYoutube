@@ -1,0 +1,51 @@
+<div class="loader" *ngIf="loading == 'show'">
+	<img src="assets/images/ajax-gray.gif" />
+</div>
+
+<div class="col-md-12" *ngIf="video && loading == 'hide'">
+	<hr/>
+		<h3>{{video.title}}</h3>
+	<hr/>
+
+	<div class="col-md-8">
+		<video controls id="video-player">
+			<source src="http://localhost/curso-fullstack/symfony/web/uploads/video_files/video_{{video.id}}/{{video.videoPath}}">
+				Tu navegador no es compatible con HTML5
+		</video>
+
+		<div class="panel panel-default video-data">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					Subido por <strong>{{video.user.name}} {{video.user.surname}}</strong> el {{video.createdAt.timestamp | generateDate }}
+				</h3>
+			</div>
+			<div class="panel-body">
+				{{video.description}}
+			</div>
+		</div>
+
+		<!-- COMPONENTE DE COMENTARIOS -->
+		<comments *ngIf="identity"></comments>
+	</div>
+
+	<div class="col-md-4">
+		<h3>Otros vídeos</h3>
+		<hr/>
+
+		<ul id="videos-list" *ngIf="lastsVideos">
+			<li *ngFor="let video of lastsVideos" class="last-video-item col-md-12 pull-left">
+				<div class="last-video-image-thumb col-md-4 pull-left">
+					<img src="http://localhost/curso-fullstack/symfony/web/uploads/video_images/video_{{video.id}}/{{video.image}}" *ngIf="video.image" />
+				</div>
+
+				<div class="data col-md-8 pull-left">
+					<h5><a [routerLink]="['/video', video.id]">{{video.title}}</a></h5>
+					<a>{{video.user.name}} {{video.user.surname}}</a>
+				</div>
+				
+			</li>
+		</ul>
+
+	</div>
+
+</div>

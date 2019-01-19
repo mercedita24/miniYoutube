@@ -1,0 +1,93 @@
+<div class="loader" *ngIf="loading == 'show'">
+	<img src="assets/images/ajax-gray.gif" />
+</div>
+<div class="col-md-12" *ngIf="identity && video && video.user &&video.user.id">
+	<hr/>
+	<h1>{{titulo}}</h1>
+	<hr/>
+
+	<div class="alert alert-success" *ngIf="status == 'success'">
+			Datos básicos de tu vídeo <strong>{{video.title}}</strong> guardados!!
+	</div>
+
+	<div class="alert alert-danger" *ngIf="status == 'error'">
+			Datos básicos no guardados
+	</div>
+
+
+	<form #updateVideoForm="ngForm" (ngSubmit)="onSubmit()" class="col-md-4">
+		<p>	
+			<label>Titulo:</label>
+			<input type="text" class="form-control" #title="ngModel" name="title" [(ngModel)]="video.title" required />
+			<span *ngIf="!title.valid && title.touched">
+				El titulo no es correcto
+			</span>
+		</p>
+
+		<p>	
+			<label>Descripción:</label>
+			<textarea class="form-control" #description="ngModel" name="description" [(ngModel)]="video.description" required></textarea>
+		</p>
+
+		<p>
+			<label>Estado:</label>
+			<select class="form-control" (change)="callVideoStatus(videostatus.value)" #videostatus>
+				<option value="public" [attr.selected]="video.status === 'public' ? 'selected' : null">Público</option>
+				<option value="private" [attr.selected]="video.status === 'private' ? 'selected' : null">Privado</option>
+			</select>
+		</p>	
+
+
+		<input type="submit" value="Actualizar" class="btn btn-success" [disabled]="!updateVideoForm.form.valid" />
+	</form>
+
+	<button class="btn btn-warning" (click)="setChangeUpload('image')" *ngIf="!changeUpload || changeUpload == 'video' || changeUpload == 'false'">
+		Actualizar imagen
+	</button>
+	
+	<div class="col-md-4" *ngIf="changeUpload == 'image'">
+		<h4>Imagen del video</h4>
+		<p>
+			<input type="file" placeholder="Subir imagen..." (change)="fileChangeEventImage($event)" />
+		</p>
+		<div class="progress">
+			<div id="upload-progress-bar" class="progress-bar progress-bar-success" 
+			role="progressbar"
+			aria-valuenow="0"
+			aria-valuemin="0"
+			aria-valuemax="100"
+			style="width: 0%;"
+			></div>
+		</div>
+		<p id="status"></p>
+
+		<button class="btn btn-warning" (click)="setChangeUpload('false')">
+			Cerrar
+		</button>
+	</div>
+
+<button class="btn btn-warning" (click)="setChangeUpload('video')" *ngIf="!changeUpload || changeUpload == 'image' || changeUpload == 'false'">
+		Actualizar vídeo
+	</button>
+
+	<div class="col-md-4" *ngIf="changeUpload == 'video'">
+		<h4>Sube el vídeo</h4>
+		<p>
+			<input type="file" placeholder="Subir video..." (change)="fileChangeEventVideo($event)" />
+		</p>
+		<div class="progress">
+			<div id="upload-progress-bar" class="progress-bar progress-bar-success" 
+			role="progressbar"
+			aria-valuenow="0"
+			aria-valuemin="0"
+			aria-valuemax="100"
+			style="width: 0%;"
+			></div>
+		</div>
+		<p id="status"></p>
+		
+		<button class="btn btn-warning" (click)="setChangeUpload('false')">
+			Cerrar
+		</button>
+	</div>
+</div>
