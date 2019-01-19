@@ -30,4 +30,4 @@ la parte de Frontend esta desarrollada en angular lo cual debes estar en la carp
 npm install
 
 # Probando la aplicación
-ng serve
+npm start
