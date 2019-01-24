@@ -18,10 +18,7 @@ $ git clone git://github.com/mercedita24/miniYoutube.git
 $ composer install
 
 # Probando la aplicación
-
-La forma más sencilla de probar la aplicación, ejecuta el siguiente comando, que arranca el servidor web interno de PHP y hace que tu aplicación se pueda ejecutar sin necesidad de usar Apache o Nginx:
-
-$ php app/console server:run
+http://localhost/curso-fullstack/symfony/web/app_dev.php/ (y probar los servicios con postman)
 
 # ANGULAR 2
 la parte de Frontend esta desarrollada en angular lo cual debes estar en la carpeta "angular" de este repositorio
